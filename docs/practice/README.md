@@ -1,9 +1,10 @@
 # Practice Questions
 
-This directory splits the 30-question assessment into separate question, hint, and answer files.
+This directory splits the warm-up drill and 30-question assessment into separate question, hint, and answer files.
 
 | # | Section | Question | Hint | Answer |
 | --- | --- | --- | --- | --- |
+| Warm-Up | Basic C++ Before Core Systems | [Basic C++ Drill Questions](questions/warmup_basic_cpp_drill.md) | [Hint](hints/warmup_basic_cpp_drill.md) | [Answer](answers/warmup_basic_cpp_drill.md) |
 | Q0 | Month 0: Core Systems Programming, Resource Stability, & DS/A (C++) | [C++ Implementation: Build Validation Smoke Test](questions/q00_cpp-implementation-build-validation-smoke-test.md) | [Hint](hints/q00_cpp-implementation-build-validation-smoke-test.md) | [Answer](answers/q00_cpp-implementation-build-validation-smoke-test.md) |
 | Q1 | Month 0: Core Systems Programming, Resource Stability, & DS/A (C++) | [Systems Theory: The Cost of Cache Invalidation and false sharing](questions/q01_systems-theory-the-cost-of-cache-invalidation-and-false-sharing.md) | [Hint](hints/q01_systems-theory-the-cost-of-cache-invalidation-and-false-sharing.md) | [Answer](answers/q01_systems-theory-the-cost-of-cache-invalidation-and-false-sharing.md) |
 | Q2 | Month 0: Core Systems Programming, Resource Stability, & DS/A (C++) | [Systems Theory: Atomic Memory Orderings](questions/q02_systems-theory-atomic-memory-orderings.md) | [Hint](hints/q02_systems-theory-atomic-memory-orderings.md) | [Answer](answers/q02_systems-theory-atomic-memory-orderings.md) |
