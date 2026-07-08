@@ -20,3 +20,18 @@ struct alignas(std::hardware_destructive_interference_size) MotorCommandData {
 };
 
 ```
+
+## General Core Answer
+
+The likely cause is false sharing. CPUs usually move memory between cache and cores in cache-line-sized chunks, not in individual C++ object-sized chunks. A common cache line size is 64 bytes. If two counters sit near each other in the same struct, they may occupy the same cache line even though they are separate variables.
+
+When one core writes to its counter, the coherence protocol treats the whole cache line as modified by that core. If another core wants to write a different counter on the same line, it must obtain ownership of that same line. The line bounces between cores, causing repeated invalidation and refetch traffic. The variables are logically independent, but the hardware coherence unit is shared.
+
+This is different from a data race. A data race means two threads access the same memory location concurrently, at least one access is a write, and there is no valid synchronization. False sharing can happen even when there is no data race: each thread may update a different atomic counter correctly, but both counters still live on the same cache line.
+
+Practical fixes include:
+
+- Put heavily written per-thread counters into separate cache lines with padding or explicit alignment.
+- Store per-thread state in separate objects or arrays indexed by thread, then combine results after the hot loop.
+- Separate frequently written fields from read-mostly fields so unrelated writes do not invalidate data other cores need.
+- Avoid placing hot counters next to each other in compact shared structs when different cores update them independently.
