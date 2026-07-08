@@ -1,0 +1,17 @@
+build/
+build-*/
+.git/
+.agents/
+.codex/
+
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+.idea/
+.vscode/
+*.swp
+*.swo
