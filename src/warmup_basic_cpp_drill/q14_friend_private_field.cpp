@@ -1,1 +1,1 @@
-// Show a small example where a friend function can read a private field.
+// Show a small example where a friend function can read a private field in a Google-style class.

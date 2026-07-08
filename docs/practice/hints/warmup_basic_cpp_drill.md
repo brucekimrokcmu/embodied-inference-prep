@@ -8,6 +8,7 @@ Use these rules of thumb while working through the drill:
 
 - Start with the simplest compiling program: include the header you use, write the smallest function or class, and keep `main` boring.
 - Prefer `const&` for read-only parameters and non-const `&` only when the function intentionally modifies the caller's object.
+- For class drills, follow Google-style class layout: public API first, private data last, private data members named with trailing underscores, `explicit` for single-argument constructors, and virtual destructors for polymorphic base classes.
 - Treat raw `new` and `delete` as a learning exercise. In real code, prefer RAII types such as `std::vector`, `std::string`, `std::unique_ptr`, and standard library containers.
 - If a class owns raw memory, think about the rule of five: destructor, copy constructor, copy assignment, move constructor, and move assignment.
 - Use `override` on virtual function overrides and give polymorphic base classes virtual destructors.

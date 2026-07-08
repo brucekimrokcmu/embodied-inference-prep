@@ -92,16 +92,40 @@
    Stack objects are destroyed automatically when they leave scope. Prefer RAII for heap ownership because manual `delete` is easy to miss on early returns or exceptions.
 
 9. ```cpp
-   struct Point {
-       Point() : x(0), y(0) {}
-       Point(int x_value, int y_value) : x(x_value), y(y_value) {}
+   class Point {
+   public:
+       Point() : x_(0), y_(0) {}
+       Point(int x, int y) : x_(x), y_(y) {}
 
-       int x;
-       int y;
+       int x() const { return x_; }
+       int y() const { return y_; }
+
+   private:
+       int x_ = 0;
+       int y_ = 0;
    };
    ```
 
-10. A destructor releases resources owned by the object, such as memory, file handles, locks, or other cleanup work.
+10. ```cpp
+    class ScopedFlag {
+    public:
+        explicit ScopedFlag(bool& flag) : flag_(flag) {
+            flag_ = true;
+        }
+
+        ~ScopedFlag() {
+            flag_ = false;
+        }
+
+        ScopedFlag(const ScopedFlag&) = delete;
+        ScopedFlag& operator=(const ScopedFlag&) = delete;
+
+    private:
+        bool& flag_;
+    };
+    ```
+
+    The destructor resets the referenced flag when the object leaves scope, which is the RAII part of the exercise.
 
 ## Section 3
 
@@ -112,6 +136,15 @@
        ~IntOwner() { delete value_; }
 
        IntOwner(const IntOwner& other) : value_(new int(*other.value_)) {}
+
+       IntOwner& operator=(const IntOwner& other) {
+           if (this != &other) {
+               int* copy = new int(*other.value_);
+               delete value_;
+               value_ = copy;
+           }
+           return *this;
+       }
 
    private:
        int* value_;
@@ -124,13 +157,21 @@
    ```
 
 13. ```cpp
-   struct Point {
-       int x = 0;
-       int y = 0;
+   class Point {
+   public:
+       Point() = default;
+       Point(int x, int y) : x_(x), y_(y) {}
+
+       int x() const { return x_; }
+       int y() const { return y_; }
+
+   private:
+       int x_ = 0;
+       int y_ = 0;
    };
 
    Point operator+(Point lhs, Point rhs) {
-       return {lhs.x + rhs.x, lhs.y + rhs.y};
+       return Point(lhs.x() + rhs.x(), lhs.y() + rhs.y());
    }
    ```
 
@@ -150,7 +191,10 @@
    ```
 
 15. ```cpp
-   class Shape {};
+   class Shape {
+   public:
+       virtual ~Shape() = default;
+   };
 
    class Circle : public Shape {};
    ```
@@ -217,11 +261,14 @@
 24. ```cpp
    class InstanceCounter {
    public:
-       InstanceCounter() { ++created; }
-       static int created;
+       InstanceCounter() { ++created_; }
+       static int created() { return created_; }
+
+   private:
+       static int created_;
    };
 
-   int InstanceCounter::created = 0;
+   int InstanceCounter::created_ = 0;
    ```
 
 ## Section 6

@@ -17,24 +17,24 @@ Work through these drills before starting the Month 0 core systems questions. Th
 
 5. Write a function that takes `const std::string& name` and returns `"hello, " + name`.
 6. Open a text file with `std::ifstream` and print each line.
-7. Define a `Counter` class with a constructor, initializer list, `Increment()`, and `Value() const`.
+7. Define a `Counter` class using Google-style class layout: public API first, private data members last, and a trailing underscore for private data members. Include a constructor, initializer list, `Increment()`, and `int Value() const`; the validator calls `Value()` on a `const Counter`.
 8. Create one `int` on the stack and one `int` on the heap with `new`; print both, release the heap value with `delete`, and explain why manual heap ownership should usually be replaced by RAII.
-9. Add two overloaded constructors to a `Point` class: a default constructor and one that accepts `x` and `y`.
-10. Explain what a destructor is responsible for.
+9. Add two overloaded constructors to a `Point` class using Google-style class layout: a default constructor and one that accepts `x` and `y`. Keep data private and expose `int x() const` and `int y() const` accessors.
+10. Write a Google-style RAII class `ScopedFlag` that stores a `bool&`, sets it to `true` in the constructor, and resets it to `false` in the destructor. Delete copy construction and copy assignment.
 
 ## Section 3: Copying, Overloading, Operators, Friend, Inheritance
 
-11. Write a copy constructor for a simple class that owns an `int*`.
+11. Write a copy constructor for a simple class that owns an `int*`. Use Google-style class layout and avoid public data members.
 12. Write two overloaded `Add` functions: one for `int`, one for `double`.
-13. Overload `operator+` for a small `Point` struct.
-14. Show a small example where a `friend` function can read a private field.
-15. Create a base class `Shape` and derived class `Circle`.
+13. Overload `operator+` for a small `Point` class with private `x_` and `y_` members plus `int x() const` and `int y() const` accessors.
+14. Show a small example where a `friend` function can read a private field in a Google-style class.
+15. Create a base class `Shape` and derived class `Circle` using public inheritance and a virtual base destructor.
 
 ## Section 4: Polymorphism, Abstract Classes, Interfaces
 
 16. Add a virtual destructor to a base class and explain why it matters.
-17. Write an abstract class, also called an interface-style class in C++, with a pure virtual function `Area() const`.
-18. Override `Area() const` in a derived `Rectangle` class.
+17. Write an abstract class, also called an interface-style class in C++, with a virtual destructor and a pure virtual function `Area() const`.
+18. Override `Area() const` in a derived `Rectangle` class using `override`, a `Rectangle(double width, double height)` constructor, private dimensions, and trailing underscores for private data members.
 19. Explain what a virtual table is at a high level.
 20. Explain one risk of multiple inheritance.
 
@@ -43,7 +43,7 @@ Work through these drills before starting the Month 0 core systems questions. Th
 21. Show one example of `static_cast`.
 22. Show one example where `dynamic_cast` is appropriate.
 23. Write an `inline` function `Square(int)`.
-24. Add a static member variable that counts how many objects of a class have been created.
+24. Add a static member variable that counts how many objects of a class have been created. Keep the class layout public-before-private and use a trailing underscore for private/static data members.
 
 ## Section 6: Exceptions, Vectors, Iterators
 
@@ -86,7 +86,7 @@ Work through these drills before starting the Month 0 core systems questions. Th
 
 47. Create a `std::shared_ptr<int>` and copy it to another owner.
 48. Create a `std::weak_ptr<int>` from a `shared_ptr` and safely lock it.
-49. Write a move constructor for a class that owns an `int*`.
+49. Write a move constructor for a class that owns an `int*`. Use Google-style class layout and delete copy operations.
 50. Write a move assignment operator for the same class.
 
 ## Section 12: Constexpr, Lambdas, Variadic Templates
