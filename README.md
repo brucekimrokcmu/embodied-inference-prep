@@ -26,6 +26,8 @@ BUILD_DIR=/tmp/embodied-inference-build ./scripts/test.sh
 
 The Q0 practice prompt, hint, and answer are indexed from `docs/practice/README.md`.
 
+For role-specific interview preparation, use the L4/L5 on-device AI inference and robotics runtime question bank at `docs/l4_l5_on_device_ai_robotics_interview_questions.md`.
+
 ## Docker
 
 Build the Docker image:
