@@ -12,6 +12,8 @@ Use these rules of thumb while working through the drill:
 - Treat raw `new` and `delete` as a learning exercise. In real code, prefer RAII types such as `std::vector`, `std::string`, `std::unique_ptr`, and standard library containers.
 - If a class owns raw memory, think about the rule of five: destructor, copy constructor, copy assignment, move constructor, and move assignment.
 - Use `override` on virtual function overrides and give polymorphic base classes virtual destructors.
+- For Q15, keep `Shape` non-polymorphic and focus on public inheritance, constructor initialization, and derived-class state.
+- For Q16, record destruction in shared state; deleting through `Base*` should run `Derived::~Derived()` before `Base::~Base()`.
 - Use `static_cast` for clear compile-time conversions and `dynamic_cast` only for checked casts through polymorphic base classes.
 - Reach for STL containers based on access pattern: `vector` for contiguous sequences, `map`/`unordered_map` for key lookup, `set`/`unordered_set` for uniqueness, `queue` for FIFO, and `stack` for LIFO.
 - Use algorithms such as `std::sort`, `std::find`, and lambdas before writing manual loops for common operations.

@@ -30,11 +30,11 @@ Work through these drills before starting the Month 0 core systems questions. Th
 12. Write two overloaded `Add` functions: one for `int`, one for `double`.
 13. Overload `operator+` for a small `Point` class with private `x_` and `y_` members plus `int x() const` and `int y() const` accessors.
 14. Show a small example where a `friend` function can read a private field in a Google-style class.
-15. Create a base class `Shape` and derived class `Circle` using public inheritance and a virtual base destructor.
+15. Practice basic inheritance without polymorphism: define an empty `Shape` base class, then define `Circle` using public inheritance. Give `Circle` an explicit constructor that accepts a `double` radius and a `double radius() const` accessor. Store the radius in a private `radius_` member.
 
 ## Section 4: Polymorphism, Abstract Classes, Interfaces
 
-16. Add a virtual destructor to a base class and explain why it matters.
+16. Demonstrate why a polymorphic base class needs a virtual destructor. Define `DestructionState` with `bool base_destroyed` and `bool derived_destroyed`, both initially false. Define `Base`, constructed from a `DestructionState&`, whose virtual destructor sets `base_destroyed`. Publicly derive `Derived` from `Base`; its destructor must set `derived_destroyed`. The validator will allocate a `Derived`, delete it through a `Base*`, and verify that both destructors ran. Explain why deleting through the base pointer would be unsafe if `Base`'s destructor were not virtual.
 17. Write an abstract class, also called an interface-style class in C++, with a virtual destructor and a pure virtual function `Area() const`.
 18. Override `Area() const` in a derived `Rectangle` class using `override`, a `Rectangle(double width, double height)` constructor, private dimensions, and trailing underscores for private data members.
 19. Explain what a virtual table is at a high level.

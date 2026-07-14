@@ -191,24 +191,44 @@
    ```
 
 15. ```cpp
-   class Shape {
-   public:
-       virtual ~Shape() = default;
-   };
+   class Shape {};
 
-   class Circle : public Shape {};
+   class Circle : public Shape {
+   public:
+       explicit Circle(double radius) : radius_(radius) {}
+
+       double radius() const { return radius_; }
+
+   private:
+       double radius_;
+   };
    ```
 
 ## Section 4
 
 16. ```cpp
+   struct DestructionState {
+       bool base_destroyed = false;
+       bool derived_destroyed = false;
+   };
+
    class Base {
    public:
-       virtual ~Base() = default;
+       explicit Base(DestructionState& state) : state_(state) {}
+       virtual ~Base() { state_.base_destroyed = true; }
+
+   protected:
+       DestructionState& state_;
+   };
+
+   class Derived : public Base {
+   public:
+       explicit Derived(DestructionState& state) : Base(state) {}
+       ~Derived() override { state_.derived_destroyed = true; }
    };
    ```
 
-   It allows deleting derived objects through a base pointer safely.
+   A virtual base destructor makes `delete base_pointer` dispatch to the derived destructor first, followed by the base destructor. Without it, deleting a `Derived` through a `Base*` has undefined behavior and can skip derived cleanup.
 
 17. ```cpp
    class Shape {

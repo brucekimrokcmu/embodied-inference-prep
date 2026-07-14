@@ -64,6 +64,17 @@ is_unimplemented() {
     ' "${source}"
 }
 
+has_main() {
+    local source="$1"
+    local pattern='(^|[[:space:]])int[[:space:]]+main[[:space:]]*\('
+
+    if command -v rg >/dev/null 2>&1; then
+        rg -q "${pattern}" "${source}"
+    else
+        grep -Eq "${pattern}" "${source}"
+    fi
+}
+
 run_source() {
     local source="$1"
     local name
@@ -100,7 +111,7 @@ run_source() {
         return
     fi
 
-    if rg -q '(^|[[:space:]])int[[:space:]]+main[[:space:]]*\(' "${source}"; then
+    if has_main "${source}"; then
         printf '%s: compiling\n' "${name}"
         "${cxx}" -std=c++20 -Wall -Wextra -pedantic "${source}" -o "${output}" || return
 
