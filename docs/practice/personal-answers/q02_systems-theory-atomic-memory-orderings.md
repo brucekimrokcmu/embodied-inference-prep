@@ -6,7 +6,19 @@
 
 ## Question
 
-A real-time thread reads state vectors from a lock-free queue using std::memory_order_relaxed, while a background inference worker pushes updates using std::memory_order_relaxed. Explain why this code might crash or read stale pointers on an ARM-based robotics SoC, and describe the exact combination of memory_order flags required to establish a proper values-release relationship.
+A producer thread constructs a new state object, writes its fields, and then publishes a pointer to it for a real-time consumer thread. On an ARM-based robotics SoC, the consumer sometimes observes a partially initialized object even though both sides use std::memory_order_relaxed.
+
+Explain why this can happen and identify the acquire/release operations needed to establish a happens-before relationship between producer and consumer.
+
+## Follow-Ups
+
+- Why does x86 often appear to work while ARM fails?
+- What is the difference between memory_order_acquire and a full fence?
+- Can memory_order_consume replace acquire here?
+- Why is memory_order_seq_cst not always desirable?
+- How would you extend this pattern from a simple publication step to an SPSC queue?
+- What changes are needed for MPMC, and where do ABA issues show up?
+- How would hazard pointers or epoch-based reclamation solve safe reclamation?
 
 ## My Answer
 
