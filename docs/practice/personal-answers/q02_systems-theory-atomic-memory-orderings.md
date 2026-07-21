@@ -22,7 +22,7 @@ Explain why this can happen and identify the acquire/release operations needed t
 
 ## My Answer
 
-_Write your answer here._
+Under std::memory_order_relaxed, ops are atomic, but there is no synchronization or memory ordering constraints imposed. The compiler and CPU are free to reorder memory operations. Consequently, the consumer dereferences a valid pointer to access memory fields that have not yet been written or flushed to cache.
 
 ## My Comments
 
