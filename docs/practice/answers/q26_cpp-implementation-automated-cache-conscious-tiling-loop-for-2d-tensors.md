@@ -4,6 +4,17 @@
 
 ## Answer
 
+The runtime-level goal is to keep the active working set small enough for cache reuse. A tiled loop processes a subrectangle of the tensor before moving to the next subrectangle. This can reduce cache misses compared with repeatedly sweeping a large matrix in an order that evicts data before reuse.
+
+A basic design computes tile height and width from a cache budget and element size, then loops:
+
+- outer loop over tile row start
+- outer loop over tile column start
+- inner loop over rows inside the tile
+- inner loop over columns inside the tile
+
+Boundary checks use `min(row_start + tile_rows, rows)` and the same for columns. Alignment and SIMD can improve throughput, but correctness and locality come first. The runtime should benchmark because tile sizes depend on operation, layout, and target CPU.
+
 ```cpp
 #include <vector>
 #include <cstddef>

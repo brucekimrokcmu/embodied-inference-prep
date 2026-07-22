@@ -4,6 +4,12 @@
 
 ## Answer
 
+A runtime-oriented transform graph should be built once and queried cheaply. At initialization, map frame names to integer IDs, validate that the graph is a tree or DAG as expected, and store parent links, edge transforms, and depth/topological metadata in contiguous arrays.
+
+For repeated queries, precompute common paths or use a bounded scratch buffer to climb from each node to a common ancestor. The hot path should operate on IDs and array indices, not strings or heap-allocated graph nodes. If topology is static, paths can be cached as fixed arrays of edge IDs.
+
+The practical benefits are predictable allocation, cache-friendly traversal, and clear invalidation rules. If calibration changes an edge transform but not topology, update the transform value without rebuilding the whole graph. If topology changes, rebuild the precomputed metadata outside the control loop.
+
 ```cpp
 #include <vector>
 #include <string>

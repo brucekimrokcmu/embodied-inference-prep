@@ -4,6 +4,12 @@
 
 ## Answer
 
+The runtime problem is not "pin arbitrary physical addresses"; it is reducing expensive movement and synchronization across execution units. User-space code can choose backend placement, buffer allocation APIs, batching boundaries, and ownership of intermediate state.
+
+A practical strategy is to co-locate models or state that communicate frequently, batch draft tokens before synchronization, and keep KV-cache pages on the backend that performs validation. If shared buffers are available through platform APIs, use those instead of copying through ordinary host memory. If pinned or page-locked memory is available, use it through supported allocator interfaces and account for its limited availability.
+
+The runtime should measure whether the bottleneck is token transfer, KV-cache movement, backend queueing, or synchronization frequency. The best fix may be fewer crossings, not lower-level address pinning.
+
 To avoid high-latency PCIe/system bus transfers between distinct hardware units, you must design a unified memory architecture using a shared memory pool managed via a hardware-abstracted runtime layer.
 +-----------------------------------------------------------------------+
 |                       Unified System Memory Pool                      |

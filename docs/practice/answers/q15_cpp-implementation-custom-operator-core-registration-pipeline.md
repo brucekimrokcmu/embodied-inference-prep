@@ -4,6 +4,18 @@
 
 ## Answer
 
+At runtime level, custom op registration is a controlled extension point. The framework needs to map an op name or code to a factory, construct per-op state, validate input/output layouts, run the kernel, and destroy state. The key is that custom code follows the runtime lifecycle instead of allocating arbitrary resources in the hot path.
+
+A minimal mock should include:
+
+- An abstract kernel interface with lifecycle methods.
+- A concrete activation kernel implementation.
+- A registry from op name to factory function.
+- Shape/layout validation before execution.
+- RAII ownership for any persistent kernel state.
+
+The practical runtime concern is isolation. A custom op should not bypass buffer ownership rules, leak handles, allocate unpredictably during `Run`, or make fallback impossible when unsupported shapes appear.
+
 ```cpp
 #include <vector>
 #include <string>

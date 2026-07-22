@@ -4,6 +4,12 @@
 
 ## Answer
 
+Speculative decoding is a runtime pipeline. A small draft model proposes several candidate tokens quickly. The primary model then validates those candidates, accepting a prefix and rejecting the rest if probabilities disagree.
+
+The manager should keep proposed tokens in a staging buffer. It should not permanently mutate visible session state or primary KV-cache state until validation completes. Accepted tokens are committed; rejected tokens are discarded and normal decoding resumes from the last accepted state.
+
+The practical runtime concerns are scheduling and memory ownership. Draft and primary models may run on different backends, but token buffers, KV-cache pages, and completion events must be coordinated. The design should make rollback cheap and explicit.
+
 ```cpp
 #include <vector>
 #include <memory>

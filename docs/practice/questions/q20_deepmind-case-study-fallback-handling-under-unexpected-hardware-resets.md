@@ -5,3 +5,7 @@
 ## Question
 
 An on-device NPU running a vision-guided manipulation sub-graph encounters a hardware timeout or an unexpected driver-level reset. Design a robust, low-latency framework fallback architecture that instantly catches the dispatch failure and routes execution to a collection of optimized CPU reference kernels, preserving safety margins without missing a robot control tick.
+
+## Runtime Engineer Framing
+
+Treat fallback as runtime state management. Focus on detecting backend failure, preserving input/output contracts, switching to a safe CPU or degraded path, and ensuring the control loop has a bounded response even when model quality drops.

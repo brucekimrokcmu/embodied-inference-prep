@@ -4,6 +4,12 @@
 
 ## Answer
 
+A fused runtime node replaces two graph nodes with one execution unit when the intermediate tensor has no external users. Instead of writing convolution output to a full tensor and then reading it for activation, the node computes each output value, applies activation, and writes the final value once.
+
+The runtime must preserve semantics: shapes, padding, strides, quantization parameters, and activation behavior must match the unfused graph. Fusion is valid only when no other node needs the unfused intermediate value.
+
+The benefit is lower memory traffic and fewer allocations. The tradeoff is less modularity and more specialized kernels. A runtime engineer should fuse hot patterns that are common and measurable, while keeping fallback paths for unsupported shapes.
+
 ```cpp
 #include <vector>
 #include <cmath>

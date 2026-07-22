@@ -4,5 +4,11 @@
 
 ## Answer
 
+The runtime-level tradeoff is flexibility versus preplanning. A runtime that supports dynamic backend delegation and fallback can adapt to device capability and runtime conditions, but it may need more metadata handling, partitioning, and dynamic memory decisions. A more ahead-of-time program representation can reduce runtime decision-making, but it may be less flexible when shapes, backends, or model variants change.
+
+For dynamic token lengths, memory planning is central. If sequence lengths vary, the runtime must either reserve for worst case, re-plan for new shapes, use paged/cache-style allocation, or constrain inputs into supported buckets. Each option affects latency, memory footprint, and fallback behavior.
+
+An edge-AI runtime engineer should evaluate frameworks by operational behavior: cold-start time, hot-path allocation, delegate fallback, profiling visibility, error handling, and how predictably the runtime behaves under changing inputs.
+
 LiteRT: Employs an adaptable, multi-layered architecture featuring an internal memory allocation engine that handles dynamic fallback execution paths. If a target NPU accelerator cannot evaluate a specific tensor layer due to an unmapped runtime condition, LiteRT catches the exception and routes the workload back to optimized CPU references (e.g., via XNNPACK). This architecture natively supports dynamic input shapes, but introduces slight runtime validation overhead and pointer indirection.
 ExecuTorch: Enforces a highly rigid, deterministic execution strategy designed for deeply embedded systems. It computes a fixed, zero-dynamic-allocation memory map ahead of time during an offline compilation step. This memory map bakes raw pointer offsets directly into a static program configuration schema. While this approach minimizes framework overhead and ensures exceptional predictability on microcontrollers, it makes handling dynamic token lengths or runtime structural changes highly difficult, requiring the memory planner to always allocate buffers matching the absolute worst-case sequence dimensions.

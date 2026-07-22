@@ -17,3 +17,7 @@ Explain why this can happen and identify the acquire/release operations needed t
 - How would you extend this pattern from a simple publication step to an SPSC queue?
 - What changes are needed for MPMC, and where do ABA issues show up?
 - How would hazard pointers or epoch-based reclamation solve safe reclamation?
+
+## Runtime Engineer Framing
+
+Frame this as a user-space publication problem: one runtime thread prepares state, another consumes it. Focus on which variables are shared, which atomic operation publishes readiness, and what ordering is sufficient for correctness on weakly ordered CPUs. Avoid treating memory ordering as CPU trivia detached from a real data handoff.

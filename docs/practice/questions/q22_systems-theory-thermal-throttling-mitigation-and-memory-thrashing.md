@@ -4,4 +4,8 @@
 
 ## Question
 
-Explain why off-chip DRAM memory bandwidth consumption, rather than pure arithmetic logic unit computation (FLOPs), is the primary driver of high thermal dissipation and battery drain on mobile systems. How do techniques like structural operator fusion and sub-graph layer-level tiling decrease this memory traffic?
+Explain why memory bandwidth and repeated tensor reads/writes are often a larger runtime bottleneck than raw FLOPs on mobile systems. How do techniques like structural operator fusion and sub-graph layer-level tiling decrease this memory traffic?
+
+## Runtime Engineer Framing
+
+Frame this as memory-traffic reduction visible to a runtime engineer: fewer tensor reads/writes, smaller working sets, better locality, and fewer intermediate buffers. Avoid requiring circuit-level thermal modeling.

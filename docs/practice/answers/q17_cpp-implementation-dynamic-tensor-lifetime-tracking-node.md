@@ -4,6 +4,12 @@
 
 ## Answer
 
+Tensor lifetime tracking is a memory reuse problem. Each intermediate buffer is produced by one operation and consumed by one or more later operations. Once the last consumer has run, the runtime can recycle that memory.
+
+A simple runtime design stores operators in topological order and precomputes a use count for each tensor. During execution, an op reads its input buffers and writes its outputs. After the op completes, the runtime decrements use counts for the inputs. Any input whose count reaches zero is returned to a buffer pool.
+
+Reference-counting wrappers can model this, but in a performance-sensitive runtime static use counts are often cheaper. The key is to avoid freeing memory back to the OS in the hot path; recycle it within the runtime's planned pool.
+
 ```cpp
 #include <vector>
 #include <memory>

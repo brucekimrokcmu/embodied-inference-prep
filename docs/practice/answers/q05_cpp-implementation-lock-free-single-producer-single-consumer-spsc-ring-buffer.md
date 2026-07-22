@@ -4,6 +4,12 @@
 
 ## Answer
 
+A runtime-level SPSC ring buffer should keep the contract simple: one producer calls `Push`, one consumer calls `Pop`, capacity is fixed, and storage is allocated before the hot loop. The producer owns writes to the head index. The consumer owns writes to the tail index. This ownership model is what makes the queue simpler than MPMC.
+
+The producer writes the item into the current head slot, then publishes the new head with release ordering. The consumer observes head with acquire ordering before reading the slot. In the other direction, the consumer publishes tail with release ordering after it consumes an item, and the producer observes tail with acquire ordering before deciding whether space is available.
+
+Cache behavior still matters in user-space code. If `head` and `tail` are on the same cache line, producer and consumer may false-share the indices. Padding or aligning the index fields is a practical mitigation. The important runtime properties are bounded memory, no allocations in the hot path, clear single-writer ownership per index, and no blocking mutex in the frame path.
+
 ```cpp
 #include <atomic>
 #include <optional>

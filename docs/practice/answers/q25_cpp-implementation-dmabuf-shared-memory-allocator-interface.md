@@ -4,6 +4,12 @@
 
 ## Answer
 
+A runtime-level `DmaBufTensorAllocator` should separate allocation policy from buffer ownership. The allocator opens the heap device or receives a heap path, issues the platform allocation call, and returns a move-only buffer object containing the FD, size, and relevant metadata.
+
+The buffer object should close its FD in the destructor, delete copy operations, implement `noexcept` moves, and optionally manage `mmap`/`munmap` if CPU access is needed. Error paths must not leak FDs. If allocation fails, return an error status or throw before publishing a partially formed object.
+
+The runtime should also document synchronization. Sharing an FD with camera/NPU/GPU drivers may require fences or cache maintenance APIs. RAII solves handle lifetime; it does not automatically solve producer/consumer synchronization.
+
 ```cpp
 #include <unistd.h>
 #include <fcntl.h>

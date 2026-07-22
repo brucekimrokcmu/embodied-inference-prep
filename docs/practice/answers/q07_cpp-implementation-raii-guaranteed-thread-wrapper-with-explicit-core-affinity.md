@@ -4,6 +4,12 @@
 
 ## Answer
 
+The runtime-level requirement is safe worker lifetime. A wrapper should start a worker, request stop on destruction, and join automatically. `std::jthread` is a good base because it already joins in its destructor and passes a `std::stop_token` to cooperative tasks.
+
+Affinity belongs in the wrapper as a best-effort or explicitly checked policy. On Linux, setting affinity through a native handle is platform-specific and can fail because of permissions, invalid CPU IDs, cgroup limits, or scheduling policy. A robust wrapper reports that failure instead of silently assuming isolation.
+
+The payload should be written so it can observe cancellation, avoid unbounded blocking, and clean up user-space resources. Core pinning can reduce jitter, but it does not replace correct queue design, bounded allocation, priority management, or watchdog handling.
+
 ```cpp
 #include <thread>
 #include <pthread.h>

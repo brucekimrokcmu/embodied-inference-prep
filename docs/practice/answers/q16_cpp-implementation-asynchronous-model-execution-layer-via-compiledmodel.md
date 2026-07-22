@@ -4,6 +4,12 @@
 
 ## Answer
 
+An async model wrapper should make submitted work explicit. A call creates an in-flight request containing input buffer references, output destinations, a completion event or future, and timeout/cancellation metadata. The primary loop submits work and continues; it does not block unless it chooses to wait for a result.
+
+The runtime must define buffer lifetime. Inputs must remain valid until the backend has consumed them. Outputs must not be read until the completion event fires. If zero-copy buffers are used, ownership and synchronization must be even clearer.
+
+The wrapper should also handle failures: accelerator timeout, cancellation, invalid input shape, or fallback routing. The important engineering property is bounded coordination overhead and clear state transitions: pending, running, complete, failed, or canceled.
+
 ```cpp
 #include <vector>
 #include <functional>

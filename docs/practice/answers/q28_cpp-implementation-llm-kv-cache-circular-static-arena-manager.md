@@ -4,6 +4,12 @@
 
 ## Answer
 
+A KV-cache arena should allocate its memory up front and manage it in pages or slots. Each page records metadata such as sequence range, layer/head layout, occupancy, and whether it can be reused. Incoming tokens reserve pages without calling the general heap.
+
+The hard correctness rule is not to overwrite cache entries that the model still needs. A circular policy is valid only when the runtime has a context window or eviction rule that makes old positions unreachable. If capacity is exceeded and no page is safely reusable, the manager should return an error or throw as specified.
+
+The runtime-level benefit is predictable memory and latency. The tradeoff is fixed capacity and the need for careful metadata validation when sessions are saved, restored, truncated, or moved across backends.
+
 ```cpp
 #include <vector>
 #include <stdexcept>

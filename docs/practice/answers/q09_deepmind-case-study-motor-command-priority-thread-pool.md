@@ -4,6 +4,12 @@
 
 ## Answer
 
+A runtime-safe scheduler separates hard real-time control from best-effort inference. The motor-control lane should run on a dedicated worker or thread group, use preallocated messages, and avoid waiting on locks held by ML tasks. Its queue should be bounded and sized for the control period.
+
+The VLA or scoring lane should be best-effort. It can use lower priority workers, larger queues, batching, and cancellation. Results should cross into the control lane through a small nonblocking handoff, such as double-buffered state or an SPSC queue. If inference is late, the control loop should use the last valid command, a safe fallback, or a degraded mode rather than blocking.
+
+Priority inversion is avoided by not sharing hot locks between lanes. Shared state should be read-mostly snapshots, atomically published pointers, or short-lived bounded critical sections. The runtime design should define overload behavior explicitly: drop stale ML outputs, rate-limit model execution, and expose telemetry for missed deadlines.
+
 ```cpp
 #include <vector>
 #include <thread>

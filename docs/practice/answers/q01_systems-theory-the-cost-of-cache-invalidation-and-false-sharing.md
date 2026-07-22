@@ -4,10 +4,21 @@
 
 ## Answer
 
-The MESI protocol manages cache consistency across CPU cores via four distinct states: Modified, Exclusive, Shared, and Invalid.
-False sharing occurs when two independent threads executing on separate CPU cores concurrently modify distinct variables that happen to occupy the same physical cache line (typically 64 bytes wide). When Core 1 modifies variable A, the cache hardware marks the entire cache line as Modified and forces an Invalid broadcast to all other cores sharing that line. When Core 2 attempts to write to variable B on that same cache line, it encounters a cache miss, stalls execution while fetching the updated line from main memory, and repeats the cycle.
-In a 500Hz robot control loop, every millisecond counts (budget = 2ms). If a thread logging sensor values and a thread issuing motor commands experience false sharing, cache line thrashing can increase latency from nanoseconds to microseconds, causing missed deadlines and physical system instability.
-Modern C++ provides std::hardware_destructive_interference_size (defined in <new>), which allows engineers to enforce structural alignment boundaries:
+At the level an edge-AI runtime engineer usually needs, false sharing is a data-layout problem: two threads write different variables, but those variables live on the same cache line. The program may be logically correct and free of data races, but the cache coherence machinery still has to move ownership of the line between cores.
+
+MESI is useful background: cache lines can be Modified, Exclusive, Shared, or Invalid. You do not need to implement MESI, but you should understand the runtime consequence. If Core 1 writes variable A and Core 2 writes variable B on the same cache line, the whole line moves back and forth even though A and B are separate C++ objects.
+
+In a 500Hz robot control loop, the budget is 2ms per cycle. If a telemetry/logging thread and a motor-command thread repeatedly write fields on the same cache line, coherence traffic can add latency jitter. That jitter matters more than average throughput because missed control deadlines can destabilize the system.
+
+Runtime-level mitigations include:
+
+- Separate hot write-heavy fields that are updated by different threads.
+- Use per-thread state or thread-local counters, then aggregate after the hot loop.
+- Add padding or alignment around heavily written fields.
+- Split shared structs into ownership-oriented objects so each thread mostly writes memory it owns.
+- Avoid placing unrelated atomics next to each other just because they are logically grouped.
+
+Modern C++ provides `alignas` and `std::hardware_destructive_interference_size` (defined in `<new>`) as one way to express cache-line separation:
 ```cpp
 #include <new>
 struct alignas(std::hardware_destructive_interference_size) RealTimeSensorData {

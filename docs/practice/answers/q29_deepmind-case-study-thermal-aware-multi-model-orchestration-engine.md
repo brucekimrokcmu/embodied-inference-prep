@@ -4,6 +4,12 @@
 
 ## Answer
 
+A thermal-aware runtime should monitor temperature, throttling state, queue latency, and model deadlines. It should classify models by criticality: control and safety workloads get priority, while perception or language workloads may reduce rate, resolution, or backend usage under thermal pressure.
+
+The policy engine can define tiers. At normal temperature, run all models at full quality. At warning temperature, reduce noncritical model frequency or input size. At critical temperature, move work off the hot accelerator, skip optional inference, or enter a safe degraded mode.
+
+The C++ coordination layer needs bounded queues, model health state, backend availability, and explicit quality levels. The goal is not maximum throughput; it is stable behavior under thermal constraints with predictable safety margins.
+
 ```cpp
 #include <fstream>
 #include <string>

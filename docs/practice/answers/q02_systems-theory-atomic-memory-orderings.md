@@ -4,6 +4,14 @@
 
 ## Answer
 
+For an edge-runtime handoff, the key is that object initialization and pointer publication are separate events. `memory_order_relaxed` makes the atomic pointer operation atomic, but it does not force the producer's prior field writes to become visible before the consumer reads through the pointer.
+
+The producer should fully initialize the object, then publish the pointer or ready flag with `memory_order_release`. The consumer should load that pointer or flag with `memory_order_acquire`; only after the acquire succeeds should it read the object fields. That acquire/release pair establishes the happens-before relationship the runtime needs.
+
+This matters more on ARM-class SoCs because the hardware memory model permits more reordering than x86 commonly exposes. The runtime-level rule is not "ARM is weird"; it is "do not rely on accidental ordering when one thread publishes data to another."
+
+For an SPSC queue, the same idea applies to the index or sequence value that makes an element visible. For MPMC, correctness also involves ownership of slots, contention between multiple producers/consumers, and safe reclamation. ABA appears when a location cycles through values and a thread mistakes a new object for the old one. Hazard pointers or epochs solve the user-space lifetime problem by preventing reclamation while another thread might still hold a reference.
+
 This is a publication bug, not an atomicity bug. With std::memory_order_relaxed, the producer can make the pointer visible before the ordinary writes that initialize the pointed-to object are visible to the consumer. On weakly ordered hardware like ARM, that reordering is allowed both by the compiler and by the CPU. The consumer can therefore load a non-null pointer and still observe stale or partially initialized fields when it dereferences the object.
 
 The required pattern is release on the publishing store and acquire on the consuming load. The release store ensures every write that happened before publication in the producer becomes visible before the pointer becomes visible. The acquire load ensures the consumer does not move later reads ahead of the publication point. That pair creates a happens-before relationship on the same atomic variable.

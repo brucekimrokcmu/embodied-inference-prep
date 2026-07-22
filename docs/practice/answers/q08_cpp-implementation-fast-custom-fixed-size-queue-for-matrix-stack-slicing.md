@@ -4,6 +4,12 @@
 
 ## Answer
 
+The runtime-friendly design is a small fixed-capacity top-K buffer. Store entries inline, track `size`, and insert a candidate only if the buffer is not full or the candidate beats the current worst kept entry.
+
+For small K, a sorted array is usually acceptable. Insert by shifting elements until the order is preserved. If the array is full and the candidate ranks below the Kth element, discard it immediately. This gives deterministic memory use and bounded O(K) insertion.
+
+The main tradeoff is flexibility. A fixed top-K structure is excellent for a hot classification path with known K, but it is not a general priority queue. A runtime engineer should choose it when bounded latency and zero allocation matter more than arbitrary capacity.
+
 ```cpp
 #include <array>
 #include <algorithm>

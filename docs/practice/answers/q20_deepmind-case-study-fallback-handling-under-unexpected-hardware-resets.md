@@ -4,6 +4,12 @@
 
 ## Answer
 
+A robust runtime treats the accelerator as a backend that can become unhealthy. Each request should have a timeout and a clear failure state. When the NPU times out or resets, the runtime marks that backend unavailable, stops submitting new work to it, and routes compatible work to pre-initialized CPU kernels or a degraded model.
+
+The control loop should not wait indefinitely for fallback. It should receive one of: a valid CPU result, the last known safe result, or an explicit safe-state signal. This keeps the robot control contract bounded even when inference quality degrades.
+
+Recovery should be asynchronous. A background health manager can reset or reinitialize the NPU, warm up delegates, and re-enable the backend only after validation. The runtime should log failures and expose health state, but the hot path should remain simple: submit, timeout, fallback, or safe output.
+
 ```cpp
 #include <iostream>
 #include <vector>
