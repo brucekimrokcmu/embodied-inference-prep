@@ -1,8 +1,18 @@
 # Embodied Inference Prep
 
+## Workspace Layout
+
+The repository is scoped to warmup C++ practice and Physical Intelligence interview preparation.
+
+- `docs/README.md`: index for prompts, hints, answers, and project specs.
+- `docs/warmup_cpp/`: warmup C++ questions, hints, answers, and personal answer file.
+- `docs/physical_intelligence/`: Physical Intelligence runtime, controls, and toy-project preparation.
+- `src/physical_intelligence/interview_stubs/`: empty C++ stubs for Physical Intelligence practice.
+- `tests/warmup_cpp/`: validators for optional warmup C++ solution files.
+
 ## Build Validation
 
-Question 0 is a minimal C++20 smoke test used to validate the repository build.
+The CMake project is intentionally minimal after the cleanup. It validates that the workspace configures successfully.
 
 ```sh
 cmake -S . -B build
@@ -24,9 +34,16 @@ Set `BUILD_DIR` to override the default `build` directory:
 BUILD_DIR=/tmp/embodied-inference-build ./scripts/test.sh
 ```
 
-The Q0 practice prompt, hint, and answer are indexed from `docs/practice/README.md`.
+Practice prompts, hints, and answers are indexed from `docs/README.md`.
 
-For role-specific interview preparation, use the L4/L5 on-device AI inference and robotics runtime question bank at `docs/l4_l5_on_device_ai_robotics_interview_questions.md`.
+## Warmup C++ Runner
+
+Add warmup solution files under `src/warmup_cpp/` using names like `q01_hello_cpp.cpp`, then run:
+
+```sh
+./scripts/run_warmup.sh q01
+./scripts/run_warmup.sh all
+```
 
 ## Docker
 

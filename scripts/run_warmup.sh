@@ -2,9 +2,9 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-warmup_dir="${repo_root}/src/warmup_basic_cpp_drill"
-test_dir="${repo_root}/tests/warmup_basic_cpp_drill"
-build_dir="${BUILD_DIR:-${repo_root}/build/warmup_basic_cpp_drill}"
+warmup_dir="${repo_root}/src/warmup_cpp"
+test_dir="${repo_root}/tests/warmup_cpp"
+build_dir="${BUILD_DIR:-${repo_root}/build/warmup_cpp}"
 cxx="${CXX:-c++}"
 stdin_path="${WARMUP_STDIN:-/dev/null}"
 
@@ -18,13 +18,27 @@ Examples:
   scripts/run_warmup.sh all
   scripts/run_warmup.sh q01
   scripts/run_warmup.sh q01 q02
-  scripts/run_warmup.sh src/warmup_basic_cpp_drill/q01_hello_cpp.cpp
+  scripts/run_warmup.sh src/warmup_cpp/q01_hello_cpp.cpp
 
 Comment-only stubs emit "unimplemented".
 Implemented files are validated with a matching test when one exists.
 Files without matching tests are compiled, or compiled and run if they define main.
 Executables read from /dev/null by default. Set WARMUP_STDIN to provide input.
 EOF
+}
+
+require_warmup_dir() {
+    if [[ ! -d "${warmup_dir}" ]]; then
+        cat >&2 <<EOF
+missing warm-up source directory: ${warmup_dir}
+
+Create solution files under src/warmup_cpp/, for example:
+  src/warmup_cpp/q01_hello_cpp.cpp
+
+The prompts are in docs/warmup_cpp/questions.md.
+EOF
+        exit 1
+    fi
 }
 
 resolve_target() {
@@ -129,6 +143,8 @@ if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
     usage
     exit 0
 fi
+
+require_warmup_dir
 
 targets=("$@")
 if [[ "${#targets[@]}" -eq 0 ]]; then

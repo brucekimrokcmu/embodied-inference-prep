@@ -8,9 +8,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 enable_testing()
 
-add_library(q0_example INTERFACE)
-target_include_directories(q0_example INTERFACE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/month0_core_cpp/include
+add_custom_target(workspace_smoke
+    COMMAND ${CMAKE_COMMAND} -E echo "embodied_inference_prep configured"
 )
 
-add_subdirectory(tests)
+add_test(
+    NAME workspace_smoke
+    COMMAND ${CMAKE_COMMAND} -E echo "embodied_inference_prep configured"
+)
